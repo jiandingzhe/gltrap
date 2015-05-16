@@ -1,0 +1,20 @@
+Uniform index and location are different things: index is used to fetch uniform meta data, and location is used to set uniform value using glUniformXX() calls.
+
+This is wrong:
+
+    int uni_idx = 0;
+    glGetActiveUniform(program, uni_idx, ...lots of arguments...);
+    ......
+    glUniform1i(uni_idx, value);
+    
+This is correct:
+    
+    int uni_idx = 0;
+    char uni_name[256];
+    ...lots of arguments...
+    glGetActiveUniform(program, uni_idx, ...lots of arguments..., uni_name);
+    GLint uni_loc = glGetUniformLocation(m_program, uni_name);
+    ......
+    glUniform1i(uni_loc, value);
+
+However, they are identical in some MESA drivers, and misuse would work silently.
